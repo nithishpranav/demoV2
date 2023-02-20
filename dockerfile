@@ -3,7 +3,7 @@ FROM python:3.9-bullseye
 # copy the requirements file into the image
 COPY ./requirements.txt /app/requirements.txt
 
-# switch working directory
+# switch working director
 WORKDIR /app
 
 # install the dependencies and packages in the requirements file
