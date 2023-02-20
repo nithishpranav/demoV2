@@ -1,0 +1,17 @@
+<html>
+    <head>
+        <title>
+            Machine Registration
+        </title>
+    </head>
+    <body>
+        <button id = "register" onclick="register()">register</button>
+    </body>    
+
+    <script>
+        function register(){
+            console.log("register");
+            window.location.href = "{{ url_for('machineDashboard') }}";
+        }
+    </script>
+</html> 

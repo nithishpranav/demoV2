@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <title>
+            Home
+        </title>
+    </head>
+    <body>
+        {% block y %}
+        
+        {% if session.userWID %}
+            Wallet Address {{ session.userWID }} 
+            <h1>
+                Home
+            </h1>
+            <center>
+            <h2>Machine Console</h2>
+            <form action = "/machineDashboard" method = "POST">
+                <p>Machine ID <input type = "text" name = "machineID"></p>
+                <p><input type = "submit" value = "submit" /></p>
+            </form>
+
+            <h2>Machine Registration</h2>
+            <p>
+                <a href = "{{ url_for('machineRegistration') }}">Register Machine</a>
+            </p>
+            <a href="/logout">logout</a>.
+        </center>
+        {% else %}
+            You are not Register. <a href="/login">login</a>.
+        {% endif %}
+        
+        {% endblock %}
+    </body>
+</html>
