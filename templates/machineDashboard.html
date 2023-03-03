@@ -8,7 +8,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js" integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ==" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
     <script type="text/javascript" src="{{ url_for('static', filename = 'js/app.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'js/transactions.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename = 'js/generateBill.js') }}"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <link
       href="//mincss.com/entireframework.min.css"
       rel="stylesheet"
@@ -18,9 +23,72 @@
       href="{{url_for('static', filename = 'css/app.css')}}" 
       rel="stylesheet"
     >
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js" integrity="sha512-aMGMvNYu8Ue4G+fHa359jcPb1u+ytAF+P2SCb+PxrjCdO3n3ZTxJ30zuH39rimUggmTwmh2u7wvQsDTHESnmfQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.1/chart.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'js/transactions.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename = 'js/generateBill.js') }}"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+
+    <link
+      href="//mincss.com/entireframework.min.css"
+      rel="stylesheet"
+      type="text/css"
+    >
+    <link 
+      href="{{url_for('static', filename = 'css/app.css')}}" 
+      rel="stylesheet"
+    >
+        <!--Modal-->
+    <style>
+        .btn-purple {
+        color: #fff;
+        background-color: #6f42c1;
+        border-color: #643ab0;
+        }
+        .modal-body div{float:left; width:  100%;  }
+        .modal-body div p{float:left;width: 150px; font-weight: 600;}
+        .modal-body div span{float:left;width: auto !important;}
+        body .modal-dialog { /* Width */
+            max-width: 60%;
+            width: auto !important;
+            display: inline-block;
+            margin-left: 10%;
+        } 
+        .modal fade {
+            width: auto !important;
+
+
+        }
+
+    </style>
   <!--Loading Animation-->
     <style>
+
+      #billLoader {
+        z-index: 1;
+        width: 60px;
+        height: 60px;
+        padding: 20%;
+        border: 16px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 16px solid #3498db;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+      }
+
       #loader {
         position: absolute;
         left: 50%;
@@ -64,6 +132,8 @@
         from{ bottom:-100px; opacity:0 } 
         to{ bottom:0; opacity:1 }
       }
+
+
     </style>
   </head>
 
@@ -77,7 +147,7 @@
           2.2 Dashboard
             2.2.1 Chart Container
   -->
-  <body onload="noLoader(),noDashboard(),machineDetails(),noBill()">
+  <body onload="noLoader(),noDashboard(),machineDetails(),noBill(),notransacstionPageContainer(),noBillGeneratingLoader()">
     <div id = "l">
       <div id="loader"></div>
       <center>
@@ -86,30 +156,53 @@
     </div>
     <!--Main--> 
     <div class ="main" id = "main">
-      <nav class="nav" tabindex="-1" onclick="this.focus()">
-        <div class="container">
-          <a class="pagename current" href="#">Machine Dashboard</a>
-        </div>
-      </nav>
+
       <!--Dashboard-->
       <div id = "dashboard">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+          <div class="navbar-nav mr-auto">
+  
+            <img src='../static/logo/little-blocks-logo.png' alt="Little Blocks Logo" />
+            </div>  
+            <a class="navbar-brand" href="#">{{ session.machineID }} </a>
+          <div class = 'nav-right'>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav">
+                <li class="nav-item active">
+                  <a class="nav-link" onclick="getDashboardContainer()">Machine Metrics <span class="sr-only">(current)</span>  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" onclick="getTransactionPageContainer()">Machine Transactions </a>
+  
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('index') }}">Home </a>
+  
+                </li>
+  
+              </ul>
+            </div>
+          </div>
+    </nav>
         <button class="btn-close btn btn-sm">×</button>
         <!--Chart-->
-        <div class="chartcontainer">
+        <div class="chartcontainer" id = "charts" style="padding: 1%;">
           <!--Telemetry Chart-->
-          <div class="chart">
+          <div class="chart" id = "metricsChart">
             <h3>Telemetry Time Series Data</h3>
-              <canvas id="myChart" width="400" height="200"></canvas>
+              <canvas id="myChart" width="400" height="200" onclick="metricsChartBigger()""></canvas>
           </div>
           <!--Day Usage Chart-->
-          <div class="chart">
-            <h3>Machine Usage</h3>
-            <button id = "view" onclick="appear()">View</button>
-            <br>
-            <br>
-            <canvas id="dayUsageChart" width="853" height="406"></canvas>
+          <div class="chart" id = "dayChart">
+            <h3 style="float:right">Machine Usage</h3>
+
+            <canvas id="dayUsageChart" width="20%" height="10%" onclick="dayChartBigger()"></canvas>
           </div>
         </div>
+
+
+
+
         <!--Machine Details-->      
         <div id = "transferContainercd" class="grid-container"> 
           <div class="hero">
@@ -152,34 +245,147 @@
             ></canvas>
           </div>
           <!--Bill-->
-          <div class ="b" id = "generateBill">
-            <center>
-            <input type="date" id="from_date" placeholder="From">
-            <input type="date" id="to_date" placeholder="To">
-            <button onclick="generateBill()">Generate Bill</button>
-          </center>
-          </div>
-          <div class = 'b' id = "bill">
-            <center>
-            <br>
-              <table>
-              <tr>
-                <th>  Machine Usage</th>
-                <td id = bill_usage></td>
-              </tr>
-              <tr>
-                <tH>Month Due</tH>
-                <td id = bill_cost></td>
-              </tr>
-              </table>
-              <br>
-              <button onclick="payBill()">Settle Amount</button>
-              <br><br><br>
+          <div id="billSuperContainer">
+            <div id = "billContainerLoader">
+              <center>
+              <div id="billLoader"></div>
+              <p>Generating Bill</p>
+              </center>
+            </div>
+            <div id="billContainer">
+            <div class ="b" id = "generateBill">
+              <center>
+              <input type="date" id="from_date" placeholder="From">
+              <input type="date" id="to_date" placeholder="To">
+              <button onclick="generateBill()">Generate Bill</button>
             </center>
+            </div>
+            <div class = 'b' id = "bill">
+              <span class = "close" onclick="closeGeneratedBill()"> &times; </span>
+              <center>
+              <br>
+                <table>
+                <tr>
+                  <th>  Machine Usage</th>
+                  <td id = bill_usage></td>
+                </tr>
+                <tr>
+                  <tH>Month Due</tH>
+                  <td id = bill_cost></td>
+                </tr>
+                </table>
+                <br>
+                <button onclick="payBill()">Settle Amount</button>
+                <br><br><br>
+              </center>
+            </div>
+          </div>
           </div>
         </div>
       </div>
+
+      <div id="transactionPageContainer">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+          <div class="navbar-nav mr-auto">
+  
+            <img src='../static/logo/little-blocks-logo.png' alt="Little Blocks Logo" />
+            </div>  
+            <a class="navbar-brand" href="#">{{ session.machineID }} </a>
+          <div class = 'nav-right'>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav">
+                <li class="nav-item">
+                  <a class="nav-link" onclick="getDashboardContainer()">Machine Metrics <span class="sr-only">(current)</span>  </a>
+                </li>
+                <li class="nav-item active">
+                  <a class="nav-link" onclick="getTransactionPageContainer()">Machine Transactions </a>
+  
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('index') }}">Home </a>
+  
+                </li>
+  
+              </ul>
+            </div>
+          </div>
+    </nav>
+
+    
+      <div class="row">
+        <div class="col-md-12">
+        <div class="table-wrap"> 
+          <h3>Machine Usage Transactions</h3> 
+          <table id="example" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Block Hash</th>
+                    <th>Transaction hash</th>
+                    <th>Time Stamp</th>
+                    <th>Usage</th>
+                    <th style="display: none;">from</th>
+                    <th style="display: none;">to</th>
+                    <th style="display: none;">time recived</th>
+                    <th style="display: none;">gasUsed</th>
+                    <th style="display: none;">blockNumber</th>
+                </tr>
+            </thead>
+            <!-- <tbody>
+              <tr>
+                <td>test</td>
+                <td>test</td>
+                <td>test</td>
+                <td>test</td>
+              </tr>
+            </tbody> -->
+            <tbody id = "transactionTableBody">
+            </tbody>
+        </table>
+          </div>
+        </div>
+      </div>
+    
+    
+    <!-- Modal -->
+    <div class="modal fade" id="transactionModal" role="dialog">
+      <div class="modal-dialog">
+      
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Transaction Details</h4>
+          </div>
+          <div class="modal-body">
+            <div class="blockHash"><p>Block Hash: </p><span></span></div>
+            <div class="transactionHash"><p>Transaction Hash: </p><span></span></div>
+            <div class="timeStamp"><p>Time Stamp: </p><span></span></div>
+            <div class="usage"><p>Usage: </p><span></span></div>
+            <div class="from"><p>From: </p><span></span></div>
+            <div class="to"><p>To: </p><span></span></div>
+            <div class="timeReceived"><p>Time Received: </p><span></span></div>
+            <div class="gasUsed"><p>Gas Used: </p><span></span></div>
+            <div class="blockNumber"><p>Block Number: </p><span></span></div>  
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary btn-sm" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+        
+      </div>
+      </div>
+      </div>
     </div>
+
+    <!--Machine Metric Modal-->
+
+    <!-- <div  id = "machineMetricModel" class="modal fade"  role="dialog">
+      <div class="modal-dialog">
+      <div class="modalContent">
+          <span class = "close"> &times; </span>
+          <canvas id="dayUsageChart"></canvas>
+      </div>
+    </div>
+    </div> -->
   </body>
 
 
@@ -192,8 +398,65 @@
     var mwid = "0x5c70e9865822bc0add6ef06464da0d977f724577"
     //document.getElementById("mwid").innerHTML = mwid;
 
+    // function dayUsageChartModal(){
+    //   // document.getElementById("dashboard").style.display = "none";
+    //   // document.getElementById("navbar").style.display = "none";
+    //   document.getElementById("machineMetricModel").style.display = 'block'
+
+    // }
+    // // span.onclick = function() {
+    // //   document.getElementById("machineMetricModel").style.display = 'none';
+    // // }
+    
+    var dayChartBiggerFlag = false;
+    var metricsChartBiggerFlag = false;
+    function dayChartBigger(){
+      if(dayChartBiggerFlag == false){
+        document.getElementById("metricsChart").style.display = "none";
+        document.getElementById("dayChart").style.width = "80%";
+        document.getElementById("dayChart").style.height = "50%";
+        document.getElementById("dayChart").style.float = "right";
+        dayChartBiggerFlag = true;
+      }
+      else{
+        document.getElementById("metricsChart").style.display = "block";
+        document.getElementById("dayChart").style.width = "50%";
+        document.getElementById("dayChart").style.height = "50%";
+        document.getElementById("dayChart").style.float = "left";
+        dayChartBiggerFlag = false;
+      }
+    }
+    function metricsChartBigger(){
+      if(metricsChartBiggerFlag == false){
+        document.getElementById("dayChart").style.display = "none";
+        document.getElementById("metricsChart").style.width = "80%";
+        document.getElementById("metricsChart").style.height = "50%";
+        metricsChartBiggerFlag = true;
+      }
+      else{
+        document.getElementById("dayChart").style.display = "block";
+        document.getElementById("metricsChart").style.width = "50%";
+        document.getElementById("metricsChart").style.height = "50%";
+        metricsChartBiggerFlag = false;
+      }
+    }
+
+
+    function smallerChart(){
+      document.getElementById("charts").style.display = "block";
+      document.getElementById("largerDayChart").style.display = "none";
+    }
+    
+    function closeGeneratedBill(){
+      document.getElementById("bill").style.display = "none";
+    }
+
     function noLoader(){
       document.getElementById("l").style.display = "none";
+    }
+
+    function noBillGeneratingLoader(){
+      document.getElementById("billContainerLoader").style.display = "none";
     }
 
     function noDashboard(){
@@ -227,9 +490,9 @@
       console.log("machineID: "+machine_id);
       console.log("user wallet: "+userWID);
       var myHeaders = new Headers();
-      myHeaders.append("Authorization", "Basic dTBwNjgwb3pvMDpqN3dLUHRZa0xrNnBITlNDQTlDckJaNVM3MlBFemtCSGtxbjVSVkdESGRF");
+      myHeaders.append("Authorization", "Basic dTFzeDlhMmpkMTppZkdwNFFKS2gtU3RLTlZTR0RZc2xQMHBmZEdMelFJMHhiSXAzNHRzNGQ4");
       var kld_from = "kld-from="+userWID;
-      var url ="https://u0anrngbym-u0kuxslxro-connect.us0-aws.kaleido.io/instances/"+machine_id+"/contractDetails?"+kld_from;
+      var url ="https://u1afypqnup-u1qc0kallb-connect.us1-azure.kaleido.io/instances/"+machine_id+"/contractDetails?"+kld_from;
       var requestOptions = {
           method: 'POST',
           headers: myHeaders,
@@ -240,7 +503,7 @@
       .then(result => {
           //console.log(result);
           var machineDetails = JSON.parse(result);
-          console.log("result "+machineDetails);
+          console.log("result "+machineDetails.output1);
           document.getElementById("machine_value").innerHTML = machineDetails.output1;
           document.getElementById("financier_wallet_id").innerHTML = machineDetails.output2;
           document.getElementById("manufacturer_wallet_id").innerHTML = machineDetails.output3;
@@ -261,9 +524,9 @@
       
 
       document.getElementById("bill").style.display = "none";
-      var url = "https://u0anrngbym-u0kuxslxro-connect.us0-aws.kaleido.io/instances/"+machine_id+"/balanceOf?account=";
+      var url = "https://u1afypqnup-u1qc0kallb-connect.us1-azure.kaleido.io/instances/"+machine_id+"/balanceOf?account=";
       var myHeaders = new Headers();
-      myHeaders.append("Authorization", "Basic dTBwNjgwb3pvMDpqN3dLUHRZa0xrNnBITlNDQTlDckJaNVM3MlBFemtCSGtxbjVSVkdESGRF");
+      myHeaders.append("Authorization", "Basic dTFzeDlhMmpkMTppZkdwNFFKS2gtU3RLTlZTR0RZc2xQMHBmZEdMelFJMHhiSXAzNHRzNGQ4");
       var requestOptions = {
         method: 'GET',
         headers: myHeaders,
@@ -291,6 +554,21 @@
       });
     }
 
+    function notransacstionPageContainer(){
+      document.getElementById("transactionPageContainer").style.display = "none";
+      getTransactions();
+    }
+
+    function getTransactionPageContainer(){
+      document.getElementById("dashboard").style.display = "none";
+      
+      document.getElementById("transactionPageContainer").style.display = "block";
+    }
+
+    function getDashboardContainer(){
+      document.getElementById("transactionPageContainer").style.display = "none";
+      document.getElementById("dashboard").style.display = "block";
+    }
 
     function loading(){
       console.log("loading");

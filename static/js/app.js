@@ -3,28 +3,110 @@ while staring the server we must get the machine data from the machine contract 
 
 
 */
-function startServer(machineID, userWID,financierWalletID, manufacturerWalletID) {
+async function startServer(machineID, userWID,financierWalletID, manufacturerWalletID) {
 
   var financierWID = financierWalletID
   var manufacturerWID = manufacturerWalletID
   const MAX_DATA_COUNT = 100;
   var socket = io.connect();
 
-  var populateDayChartFlag = true;
-
-  socket.on("updateSensorData", async function (msg) {
-
-    if(populateDayChartFlag){
-      await populateDayChart(msg.time_stamp,machineID,userWID);
-      populateDayChartFlag = false;
+  var populateDayChartFlag = true ;
+  var startDate;
+  const MAX_DAY_USAGE_COUNT = 31;
+  const duc = document.getElementById("dayUsageChart");
+  const dayUsageChart = new Chart(duc,{
+    type: "bar",
+    data: {
+      //labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7', 'Day 8', 'Day 9', 'Day 10', 'Day 11', 'Day 12', 'Day 13', 'Day 14', 'Day 15', 'Day 16', 'Day 17', 'Day 18', 'Day 19', 'Day 20', 'Day 21', 'Day 22', 'Day 23', 'Day 24', 'Day 25', 'Day 26', 'Day 27', 'Day 28', 'Day 29', 'Day 30', 'Day 31'],
+      datasets: [
+        {
+          label: "Usage",
+          //borderColor: ['rgba(25, 119, 12, 1)',],
+          backgroundColor: ['rgba(25, 99, 132, 1)',],
+      }
+    ],
     }
+  });
 
-    console.log("Received sensorData :: " + msg.time_stamp + " :: " + msg.value+ " :: " + msg.volt_value+" :: " + msg.rotate_value+"::" + msg.vibration_value+"::" + msg.pressure_value);
+  const response  = await fetch('/lastMachineMetricsDate')
+    .then(response => response.json())
+    .then(data =>{
+      console.log(data);
+      startDate = data.date;
+    })
+  //console.log(data);
+  //console.log(data.date);
+  time_stamp = startDate;
+  console.log(startDate);
+
+  if(populateDayChartFlag){
+    await populateDayChart(startDate,machineID,userWID);
+    populateDayChartFlag = false;
+  }
+
+  socket.on("updateSensorData", async function () {
+    max = 100;
+    min = 90;
+    volt_value = Math.random() * (170 - 160) + 160;
+    rotate_value = Math.random() * (420 - 380) + 380;
+    vibration_value = Math.random() * (max - min) + min;
+    pressure_value = Math.random() * (max - min) + min;
+    console.log("Received sensorData :: " + time_stamp + " :: " + volt_value+" :: " + rotate_value+"::" + vibration_value+"::" + pressure_value);
     if (myChart.data.labels.length > MAX_DATA_COUNT) {
       removeFirstData();
     }
-    addData(msg.time_stamp,msg.volt_value,msg.rotate_value,msg.vibration_value,msg.pressure_value);
+    addData(time_stamp,volt_value,rotate_value,vibration_value,pressure_value);
+    
+    //update date
+    var dateYear = parseInt(time_stamp.slice(0,4));
+    var dateMonth = parseInt(time_stamp.slice(5,7));
+    var dateDate = parseInt(time_stamp.slice(8,10));
+    var tempDate = new Date(dateYear,dateMonth-1,dateDate);
+    var nextDate = new Date(tempDate)
+    console.log("next day "+time_stamp);
+    console.log("next day "+nextDate)
+    var hour = parseInt(time_stamp.slice(11,13))
+    console.log("hour"+ hour);
+    if(hour == 23){
+      nextDate.setDate(nextDate.getDate()+1);
+      hour = '00'
+    }
+    else if (hour<9){
+      hour = hour + 1;
+      hour = '0'+hour;
+    }
+    else{
+      hour = hour+1;
+    }
+    var month = parseInt(nextDate.getMonth())+1;
+    if(month<10)
+    month = "0"+month;
+  
+    if(nextDate.getDate()<10)
+      day = "0"+nextDate.getDate();
+    else
+      day = nextDate.getDate();
+    var temp = (nextDate.getFullYear()+'-'+month+'-'+day);
 
+
+
+    time_stamp = temp+" "+hour;
+    console.log("next day "+time_stamp);
+    
+    //write timestamp to file
+    var updateTimeStampData = {
+      'time_stamp': time_stamp
+    } 
+    var requestOptions = {
+      method: "POST",
+      headers: new Headers({
+          'Content-Type': 'application/json'
+      }),
+      body: JSON.stringify(updateTimeStampData)
+    }
+    fetch('/updateMachineMetricsDate',requestOptions)
+      .then(response => response.json())
+      .catch(error => console.log('error', error));
   });
 
   /*
@@ -55,21 +137,7 @@ function startServer(machineID, userWID,financierWalletID, manufacturerWalletID)
     }
   });
 
-  const MAX_DAY_USAGE_COUNT = 31;
-  const duc = document.getElementById("dayUsageChart");
-  const dayUsageChart = new Chart(duc,{
-    type: "bar",
-    data: {
-      //labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7', 'Day 8', 'Day 9', 'Day 10', 'Day 11', 'Day 12', 'Day 13', 'Day 14', 'Day 15', 'Day 16', 'Day 17', 'Day 18', 'Day 19', 'Day 20', 'Day 21', 'Day 22', 'Day 23', 'Day 24', 'Day 25', 'Day 26', 'Day 27', 'Day 28', 'Day 29', 'Day 30', 'Day 31'],
-      datasets: [
-        {
-          label: "Usage",
-          //borderColor: ['rgba(25, 119, 12, 1)',],
-          backgroundColor: ['rgba(25, 99, 132, 1)',],
-      }
-    ],
-    }
-  });
+
 
   function addDayUsageData(label, usage) {
     console.log("addDayUsageData "+label+"::"+usage)
@@ -122,9 +190,9 @@ function startServer(machineID, userWID,financierWalletID, manufacturerWalletID)
   function getDayUsageData(day,dayStamp) {
     console.log("getDayUsageData"+dayStamp);
     var kld_from = "kld-from="+financierWID;
-    var url = "https://u0anrngbym-u0kuxslxro-connect.us0-aws.kaleido.io/instances/0xa8b0124d967f9e18c16d8a5dfcff1bc10ef8cb1c/returnUsage?"+kld_from+"&kld-sync=true";
+    var url = "https://u1afypqnup-u1qc0kallb-connect.us1-azure.kaleido.io/instances/machineusage/returnUsage?"+kld_from+"&kld-sync=true";
     var myHeaders = new Headers();
-    myHeaders.append("Authorization", "Basic dTBwNjgwb3pvMDpqN3dLUHRZa0xrNnBITlNDQTlDckJaNVM3MlBFemtCSGtxbjVSVkdESGRF");
+    myHeaders.append("Authorization", "Basic dTFzeDlhMmpkMTppZkdwNFFKS2gtU3RLTlZTR0RZc2xQMHBmZEdMelFJMHhiSXAzNHRzNGQ4");
     myHeaders.append("Content-Type", "application/json");
 
     var raw = JSON.stringify({"timeStamp":dayStamp});
@@ -148,20 +216,25 @@ function startServer(machineID, userWID,financierWalletID, manufacturerWalletID)
       .catch(error => console.log('error', error));
   }
 
-  function usageContract(machineID,financierWID,usage,label) {
+  async function usageContract(machineID,financierWID,usage,label) {
     var daystamp = label.slice(0,10);
     var monthStamp = label.slice(4,10);
     var timeStamp = machineID+":"+label;
     var dayStamp = machineID+":"+daystamp;
     var monthStamp = machineID+":"+monthStamp;
+    usage = parseInt(usage);
+    usage = usage.toString();
     console.log(dayStamp+" "+timeStamp+" "+usage);
     var kld_from = "kld-from="+financierWID;
 
-    var url = "https://u0anrngbym-u0kuxslxro-connect.us0-aws.kaleido.io/instances/0xa8b0124d967f9e18c16d8a5dfcff1bc10ef8cb1c/recordUsage?"+kld_from+"&kld-sync=true";
+    var url = "https://u1afypqnup-u1qc0kallb-connect.us1-azure.kaleido.io/instances/machineusage/recordUsage?"+kld_from+"&kld-sync=true";
 
     var myHeaders = new Headers();
-    myHeaders.append("Authorization", "Basic dTBwNjgwb3pvMDpqN3dLUHRZa0xrNnBITlNDQTlDckJaNVM3MlBFemtCSGtxbjVSVkdESGRF");
+    myHeaders.append("Authorization", "Basic dTFzeDlhMmpkMTppZkdwNFFKS2gtU3RLTlZTR0RZc2xQMHBmZEdMelFJMHhiSXAzNHRzNGQ4");
     myHeaders.append("Content-Type", "application/json");
+    var machineIDJSON = JSON.stringify({
+      "machineID" : machineID
+    })
     var raw = JSON.stringify({
       "dayStamp": dayStamp,
       "monthStamp": monthStamp,
@@ -177,8 +250,47 @@ function startServer(machineID, userWID,financierWalletID, manufacturerWalletID)
       redirect: 'follow'
     };
     
-    fetch(url, requestOptions)
+    const response = await fetch(url, requestOptions)
       .then(response => response.text())
+      .then(result => {
+        
+        var temp = result;
+        //temp.append(raw);
+        console.log(temp);
+        const obj1 = JSON.parse(machineIDJSON)
+        const obj2 = JSON.parse(temp);
+        const obj3 = JSON.parse(raw);
+        const mergedObj = Object.assign(obj1, obj2,obj3);
+        //const jsonStr = JSON.stringify(mergedObj);
+        console.log(mergedObj);
+        writeTransactionToDB(mergedObj);
+
+      })
+      .catch(error => console.log('error', error));
+  }
+
+  async function writeTransactionToDB(jsonStr){
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      "database": "demoDB",
+      "collection": "recordUsage",
+      "Document": {
+        jsonStr
+      }
+    });
+
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow'
+    };
+
+    fetch("http://localhost:5000/mongodb", requestOptions)
+      .then(response => response.text())
+      .then(result => console.log(result))
       .catch(error => console.log('error', error));
   }
 
@@ -191,14 +303,14 @@ function startServer(machineID, userWID,financierWalletID, manufacturerWalletID)
 
   async function populateDayChart(time_stamp,machine_id,userWID){
     console.log("populateDayChart");
+    time_stamp = time_stamp.slice(0,10);
     console.log(time_stamp);
-
+    
     var from = new Date(time_stamp);
     from.setDate(from.getDate()-30);
     for(var i=0;i<30;i++){
       
       console.log(from)
-
       day = from.getDate();
       month = from.getMonth()+1;
       year = from.getFullYear();
@@ -211,14 +323,69 @@ function startServer(machineID, userWID,financierWalletID, manufacturerWalletID)
         month = '0'+month;
       }
       time_stamp = machine_id+":"+year+'-'+month+'-'+day;
-      const result = await getDayUsageData(day,time_stamp);
+      const result = await getDayUsageDataFromDB(machine_id,day,time_stamp);
       
     }
   }
+  async function getDayUsageDataFromDB(machineId,day,time_stamp){
+    var getTransaction;
+    console.log(time_stamp);
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    
+  
+    var raw = JSON.stringify({
+    "database": "demoDB",
+    "collection": "recordUsage",
+    "filter": {
+        "machineID": machineId
+    }
+    });
+  
+    var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+    };
+    const res = await fetch("http://localhost:5000/getTransactions", requestOptions)
+    .then(res => res.json())
+    .then(
+        result => {
+            getTransaction = result;
+        }
+        )
+    .catch(error => console.log('error', error));
+    
+    var dayUsage = 0;
+    getTransaction.forEach(element => {
+      //console.log(element.jsonStr["dayStamp"]);
+        if(element.jsonStr["dayStamp"] == time_stamp){
+          //console.log(element.jsonStr["usage"]);
+            dayUsage += parseInt(element.jsonStr["usage"]);
+        }
+    });
+    console.log(dayUsage);
+    addDayUsageData(day,dayUsage);
+    //return dayUsage;
+  
+  }
+  
+  async function addDayUsageData(label, usage) {
+    console.log("addDayUsageData "+label+"::"+usage)
+    console.log(dayUsageChart.data)
+  
+    var usage = usage/60;
+    if (dayUsageChart.data.labels.length > MAX_DAY_USAGE_COUNT) {
+      removeFirstDayUsageData();
+    }
+    dayUsageChart.data.labels.push(label);
+    dayUsageChart.data.datasets[0].data.push(usage);
+    dayUsageChart.update();
+  }
+  
 
 }
-
-
 
 
 

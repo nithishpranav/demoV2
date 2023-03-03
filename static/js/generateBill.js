@@ -22,6 +22,9 @@
 const { json } = require("body-parser");
 
   function generateBill(){
+    document.getElementById("billContainer").style.display = "none";
+    document.getElementById("billContainerLoader").style.display = "block";
+
     console.log("machineDetails");
     fetch('/getInfo')
       .then(response => response.json())
@@ -41,9 +44,9 @@ const { json } = require("body-parser");
     // var financier_wallet_id;
     // var machine_contract_address;
     var kld_from = "kld-from="+userWID;
-    var url ="https://u0anrngbym-u0kuxslxro-connect.us0-aws.kaleido.io/instances/"+machine_id+"/contractDetails?"+kld_from;
+    var url ="https://u1afypqnup-u1qc0kallb-connect.us1-azure.kaleido.io/instances/"+machine_id+"/contractDetails?"+kld_from;
     var myHeaders = new Headers();
-    myHeaders.append("Authorization", "Basic dTBwNjgwb3pvMDpqN3dLUHRZa0xrNnBITlNDQTlDckJaNVM3MlBFemtCSGtxbjVSVkdESGRF");
+    myHeaders.append("Authorization", "Basic dTFzeDlhMmpkMTppZkdwNFFKS2gtU3RLTlZTR0RZc2xQMHBmZEdMelFJMHhiSXAzNHRzNGQ4");
     var requestOptions = {
         method: 'POST',
         headers: myHeaders,
@@ -68,10 +71,10 @@ const { json } = require("body-parser");
 
   async function calculateBill(machine_id,userWID){
 
-    const data = await getContractDetails(machine_id, userWID);
-    console.log(data);
+    // const data = await getContractDetails(machine_id, userWID);
+    // console.log(data);
 
-    var financier_wallet_id = data.output2;
+    //var financier_wallet_id = data.output2;
 
 
 
@@ -106,7 +109,7 @@ const { json } = require("body-parser");
     
     while(tempDate<temp_to_date){
       console.log("while loop"+tempDate,to_date);
-      totalUsage+= await getUsage(tempDate,machine_id,financier_wallet_id);
+      totalUsage+= await getDayUsageDataFromDB(tempDate,machine_id);
       console.log("totalUsage"+totalUsage);
       tempDate.setDate(tempDate.getDate()+1);
       console.log(tempDate);
@@ -118,7 +121,71 @@ const { json } = require("body-parser");
     document.getElementById("bill_usage").innerHTML = totalUsage;
     document.getElementById("bill_cost").innerHTML = bill;
     document.getElementById("bill").style.display = "block";
+    document.getElementById("billContainerLoader").style.display = "none";
+
+    document.getElementById("billContainer").style.display = "block";
   }
+
+  async function getDayUsageDataFromDB(date,machine_id){
+
+
+    var month = parseInt(date.getMonth())+1;
+    if(month<10)
+    month = "0"+month;
+  
+    if(date.getDate()<10)
+      day = "0"+date.getDate();
+    else
+      day = date.getDate();
+
+    var time_stamp = (date.getFullYear()+'-'+month+'-'+day);
+    var time_stamp = machine_id+":"+time_stamp;
+
+
+
+    var getTransaction;
+    console.log(time_stamp);
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    
+  
+    var raw = JSON.stringify({
+    "database": "demoDB",
+    "collection": "recordUsage",
+    "filter": {
+        "machineID": machineId
+    }
+    });
+  
+    var requestOptions = {
+    method: 'POST',
+    headers: myHeaders,
+    body: raw,
+    redirect: 'follow'
+    };
+    const res = await fetch("http://localhost:5000/getTransactions", requestOptions)
+    .then(res => res.json())
+    .then(
+        result => {
+            getTransaction = result;
+        }
+        )
+    .catch(error => console.log('error', error));
+    
+    var dayUsage = 0;
+    getTransaction.forEach(element => {
+      //console.log(element.jsonStr["dayStamp"]);
+        if(element.jsonStr["dayStamp"] == time_stamp){
+          //console.log(element.jsonStr["usage"]);
+            dayUsage += parseInt(element.jsonStr["usage"]);
+        }
+    });
+    console.log(dayUsage);
+    return(dayUsage);
+    //return dayUsage;
+  
+  }
+
   async function getUsage(date,machine_id,financier_wallet_id){
     var month = parseInt(date.getMonth())+1;
     if(month<10)
@@ -165,6 +232,9 @@ const { json } = require("body-parser");
 
 
   function payBill(){
+    document.getElementById("main").style.display = "none";
+    document.getElementById("l").style.display = "block";
+    document.getElementById("loader").style.display = "block";
     var machine_id
     console.log("machineDetails");
     fetch('/getInfo')
@@ -191,7 +261,7 @@ const { json } = require("body-parser");
 
     var kld_from = "kld-from="+sender;
     var myHeaders = new Headers();
-    myHeaders.append("Authorization", "Basic dTBwNjgwb3pvMDpqN3dLUHRZa0xrNnBITlNDQTlDckJaNVM3MlBFemtCSGtxbjVSVkdESGRF");
+    myHeaders.append("Authorization", "Basic dTFzeDlhMmpkMTppZkdwNFFKS2gtU3RLTlZTR0RZc2xQMHBmZEdMelFJMHhiSXAzNHRzNGQ4");
     myHeaders.append("Content-Type", "application/json");
     var raw = JSON.stringify({
       "amount": amount,
@@ -204,12 +274,14 @@ const { json } = require("body-parser");
       body: raw,
       redirect: 'follow'
     };
-    fetch("https://u0anrngbym-u0kuxslxro-connect.us0-aws.kaleido.io/instances/"+machine_id+"/transferFrom?"+kld_from+"&kld-sync=true" , requestOptions)
+    fetch("https://u1afypqnup-u1qc0kallb-connect.us1-azure.kaleido.io/instances/"+machine_id+"/transferFrom?"+kld_from+"&kld-sync=true" , requestOptions)
       .then(response => response.text())
       .then(result => {
         console.log(result);
-        loading();
-        setTimeout(() => getAddressBalance(), 6000);
+        setTimeout(() => getAddressBalance(machine_id, userWID, sender, recipient), 6000);
+        document.getElementById("main").style.display = "block";
+        document.getElementById("l").style.display = "none";
+
       })
       .catch(error => console.log('error', error));
   }    
